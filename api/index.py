@@ -1,28 +1,112 @@
-# Vercel 서버리스 함수가 작동하는지 확인하는 기초 코드
 from http.server import BaseHTTPRequestHandler
 import json
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+# 1. OpenAI 클라이언트 초기화 (환경변수 사용)
+load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 class handler(BaseHTTPRequestHandler):
-    # GET 요청이 들어왔을 때 (브라우저에서 주소로 접속했을 때)
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        
-        # 응답 데이터
-        response_data = {
-            "status": "success",
-            "message": "Auto8D API is ready! Please use POST method to generate reports."
-        }
-        
-        self.wfile.write(json.dumps(response_data).encode('utf-8'))
-        return
-
-    # POST 요청이 들어왔을 때 (나중에 프론트엔드에서 데이터를 보낼 때)
     def do_POST(self):
-        # 나중에 여기에 AI 로직이 들어갑니다.
+        # 2. 요청 데이터 읽기
+        content_length = int(self.headers('Content-Length', 0))
+        if content_length == 0:
+            self.send_response(400)
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "status": "error",
+                "message": "요청 본문이 비어 있습니다."
+            }, ensure_ascii=False).encode('utf-8'))
+            return
+        
+        
+        post_data = self.rfile.read(content_length)
+        
+        try:
+            data = json.loads(post_data)
+            user_issue = data.get("issue", "발생한 품질 문제에 대한 설명이 없습니다.")
+            data = json.loads(post_data.decode("utf-8"))
+            user_issue = data.get("issue", "").strip()
+
+            if not user_issue:
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json; charset=utf-8')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "status": "error",
+                    "message": "'issue' 값을 입력해주세요."
+                }, ensure_ascii=False).encode('utf-8'))
+                return
+
+            # 3. OpenAI API 호출 (8D 리포트 생성 로직)
+            # 모델명 수정 가능
+            response = client.chat.completions.create(
+                model="gpt-5.4", 
+                messages=[
+                    {
+                        "role": "system", 
+                        "content": (
+                            "당신은 글로벌 제조 기업의 품질 관리 전문가입니다. "
+                            "사용자의 입력 내용을 바탕으로 표준 8D 리포트(D1~D8) 초안을 작성하세요. "
+                            "전문 용어를 사용하고, 각 단계별로 구체적인 예시를 포함하여 한국어로 작성해 주세요."
+                        )
+                    },
+                    {"role": "user", "content": f"다음 품질 문제에 대한 8D 리포트를 작성해줘: {user_issue}"}
+                ],
+                temperature=0.7
+            )
+
+            # 4. 성공 응답 전송
+            result = response.choices[0].message.content
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            # CORS 설정 (프론트엔드 연동 대비)
+            self.send_header('Access-Control-Allow-Origin', '*') 
+            self.end_headers()
+            
+            response_body = {
+                "status": "success",
+                "data": {
+                    "issue": user_issue,
+                    "report": result
+                }
+            }
+            self.wfile.write(json.dumps(response_body, ensure_ascii=False).encode('utf-8'))
+
+        except Exception as e:
+            # 에러 발생 시 처리
+            self.send_response(500)
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            print(f"8D generation error: {e}")
+            error_message = {
+                "status": "error",
+                "message": "8D 리포트 생성 중 오류가 발생했습니다."
+            }
+            self.wfile.write(json.dumps(error_message, ensure_ascii=False).encode('utf-8'))
+
+    def do_GET(self):
+        # API 상태 확인용 GET 핸들러
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-type', 'application/json; charset=utf-8')
+        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        self.wfile.write(json.dumps({"message": "POST request received"}).encode('utf-8'))
-        return
+        self.wfile.write(json.dumps({
+            "status": "success",
+            "message": "Auto8D API is running. Please use POST method with 'issue' data."
+        }, ensure_ascii=False).encode('utf-8'))
+
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
