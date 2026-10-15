@@ -6,7 +6,7 @@ from openai import OpenAI
 
 # 1. OpenAI 클라이언트 초기화 (환경변수 사용)
 load_dotenv()
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"), base_url=os.environ.get("OPENAI_BASE_URL"))
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
