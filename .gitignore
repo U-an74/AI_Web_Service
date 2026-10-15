@@ -1,0 +1,13 @@
+# API 키 및 환경 변수 보안
+.env 
+
+# 파이썬 실행 시 생성되는 임시 파일들
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code 설정 폴더
+.vscode/
+
+# 가상 개발 환경
+venv/
