@@ -4,13 +4,6 @@ import traceback
 import os
 from openai import OpenAI
 
-api_key = os.getenv("OPENAI_API_KEY")
-
-response = {
-    "status": "ok",
-    "api_key_exists": bool(api_key)
-}
-
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -21,6 +14,9 @@ class handler(BaseHTTPRequestHandler):
         )
 
     def do_POST(self):
+        
+        print("POST handler reached - openai auth test v1")
+
         try:
             content_length = int(self.headers.get("Content-Length", 0))
             raw_body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
@@ -42,6 +38,7 @@ class handler(BaseHTTPRequestHandler):
             
             response = {
                 "status": "ok",
+                "version": "openai-auth-test-v1"
                 "openai_auth": "success",
                 "model_count": len(models.data)
             }
@@ -60,5 +57,8 @@ class handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.end_headers()
             self.wfile.write(
-                json.dumps({"status": "error", "error": str(e)}, ensure_ascii=False).encode("utf-8")
-            )
+                json.dumps({
+                    "status": "error",
+                    "version": "openai-auth-test-v1",
+                    "error": str(e)
+                }, ensure_ascii=False).encode("utf-8"))
