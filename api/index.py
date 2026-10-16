@@ -2,7 +2,6 @@ from http.server import BaseHTTPRequestHandler
 import json
 import traceback
 import os
-from openai import OpenAI
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -28,6 +27,8 @@ class handler(BaseHTTPRequestHandler):
 
             api_key = os.getenv("OPENAI_API_KEY")
             base_url = os.getenv("OPENAI_BASE_URL")
+
+            from openai import OpenAI
 
             client = OpenAI(
                 api_key=api_key,
