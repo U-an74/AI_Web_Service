@@ -1,6 +1,14 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import traceback
+import os
+
+api_key = os.getenv("OPENAI_API_KEY")
+base_url = os.getenv("OPENAI_BASE_URL")
+
+print("STEP 1: env check")
+print("OPENAI_API_KEY exists:", bool(api_key))
+print("OPENAI_BASE_URL:", base_url)
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
