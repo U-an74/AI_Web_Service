@@ -29,10 +29,13 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(raw_body) if raw_body else {}
             issue = data.get("issue", "")
 
+            api_key = os.getenv("OPENAI_API_KEY")
+
             response = {
                 "status": "ok",
-                "received_issue": issue
+                "api_key_exists": bool(api_key)
             }
+
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
