@@ -1,28 +1,23 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import os
+from OpenAI import OpenAI
 from dotenv import load_dotenv
-from openai import OpenAI
 
 # 1. OpenAI 클라이언트 초기화 (환경변수 사용)
 load_dotenv()
 
-api_key = os.environ.get("OPENAI_API_KEY")
-base_url = os.environ.get("OPENAI_BASE_URL")
+api_key = os.getenv("OPENAI_API_KEY")
+base_url = os.getenv("OPENAI_BASE_URL")
 
 print("OPENAI_API_KEY exists:", bool(api_key))
+print("OPENAI_API_KEY prefix:", api_key[:10] if api_key else None)
 print("OPENAI_BASE_URL:", base_url)
 
 if not api_key:
     raise ValueError("OPENAI_API_KEY가 설정되지 않았습니다.")
 
-if not base_url:
-    raise ValueError("OPENAI_BASE_URL이 설정되지 않았습니다.")
-
-client = OpenAI(
-    api_key=api_key,
-    base_url=base_url
-)
+client = OpenAI(api_key=api_key)
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
