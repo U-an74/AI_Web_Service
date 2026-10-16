@@ -39,7 +39,7 @@ class handler(BaseHTTPRequestHandler):
             
             response = {
                 "status": "ok",
-                "version": "openai-auth-test-v1"
+                "version": "openai-auth-test-v1",
                 "openai_auth": "success",
                 "model_count": len(models.data)
             }
