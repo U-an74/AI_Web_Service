@@ -35,13 +35,21 @@ class handler(BaseHTTPRequestHandler):
                 base_url=base_url
             )
 
-            models = client.models.list()
+            completion = client.chat.completions.create(
+                model="gpt-5.4",
+                messages=[
+                    {"role": "system", "content": "사용자의 이슈를 한두 문장으로 간단히 요약해 주세요."},
+                    {"role": "user", "content": issue}
+                ]
+            )
+
+            answer = completion.choices[0].message.content
             
             response = {
                 "status": "ok",
-                "version": "openai-auth-test-v1",
-                "openai_auth": "success",
-                "model_count": len(models.data)
+                "version": "openai-chat-test-v1",
+                "issue": issue,
+                "answer": answer
             }
 
 
@@ -60,6 +68,6 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(
                 json.dumps({
                     "status": "error",
-                    "version": "openai-auth-test-v1",
+                    "version": "openai-chat-test-v1",
                     "error": str(e)
                 }, ensure_ascii=False).encode("utf-8"))
