@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler
 import json
 import traceback
 import os
+from openai import OpenAI
 
 api_key = os.getenv("OPENAI_API_KEY")
 
@@ -30,10 +31,19 @@ class handler(BaseHTTPRequestHandler):
             issue = data.get("issue", "")
 
             api_key = os.getenv("OPENAI_API_KEY")
+            base_url = os.getenv("OPENAI_BASE_URL")
 
+            client = OpenAI(
+                api_key=api_key,
+                base_url=base_url
+            )
+
+            models = client.models.list()
+            
             response = {
                 "status": "ok",
-                "api_key_exists": bool(api_key)
+                "openai_auth": "success",
+                "model_count": len(models.data)
             }
 
 
