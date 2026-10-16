@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import os
-from OpenAI import OpenAI
+from openai import OpenAI
 from dotenv import load_dotenv
 
 # 1. OpenAI 클라이언트 초기화 (환경변수 사용)
