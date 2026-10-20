@@ -14,7 +14,7 @@ class handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         
-        print("POST handler reached - openai auth test v1")
+        print("POST handler reached - openai chat test v1")
 
         try:
             content_length = int(self.headers.get("Content-Length", 0))
@@ -23,7 +23,20 @@ class handler(BaseHTTPRequestHandler):
             print("RAW BODY:", raw_body)
 
             data = json.loads(raw_body) if raw_body else {}
-            issue = data.get("issue", "")
+            issue = data.get("issue", "").strip()
+
+            if not issue:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(
+                    json.dumps({
+                        "status": "error",
+                        "version": "openai-chat-test-v1",
+                        "error": "issue is required"
+                    }, ensure_ascii=False).encode("utf-8")
+                )
+                return
 
             api_key = os.getenv("OPENAI_API_KEY")
             base_url = os.getenv("OPENAI_BASE_URL")
