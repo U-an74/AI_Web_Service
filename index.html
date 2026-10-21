@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto8D AI Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Auto8D AI Generator</h1>
+    <p class="description">
+      자동차 부품 품질 문제를 입력하면 8D 초안을 생성합니다.
+    </p>
+
+    <section class="card">
+      <label for="issueInput" class="label">문제 내용</label>
+      <textarea
+        id="issueInput"
+        class="textarea"
+        placeholder="예: 자동차 체인 링크플레이트(PLP) 부품에서 표면 스크래치가 조립과정에서 지속 발견되고 있습니다."
+      ></textarea>
+
+      <button id="generateBtn" class="button">8D 초안 생성</button>
+
+      <p id="message" class="message"></p>
+    </section>
+
+    <section id="resultCard" class="card result-card hidden">
+      <h2>생성 결과</h2>
+      <div id="reportText" class="report-text"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
