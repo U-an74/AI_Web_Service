@@ -43,7 +43,15 @@ if (quickStartBtn) {
 
 applyRoute();
 
-if (generateBtn && productNameInput && defectInput && foundProcessInput && message && resultCard && reportText) {
+if (
+  generateBtn &&
+  productNameInput &&
+  defectInput &&
+  foundProcessInput &&
+  message &&
+  resultCard &&
+  reportText
+) {
   generateBtn.addEventListener("click", async () => {
     const productName = productNameInput.value.trim();
     const defect = defectInput.value.trim();
@@ -51,6 +59,7 @@ if (generateBtn && productNameInput && defectInput && foundProcessInput && messa
 
     resultCard.classList.add("hidden");
     reportText.textContent = "";
+    message.textContent = "";
 
     if (!productName) {
       message.textContent = "제품명을 입력해 주세요.";
@@ -106,3 +115,4 @@ if (generateBtn && productNameInput && defectInput && foundProcessInput && messa
       generateBtn.disabled = false;
     }
   });
+}
