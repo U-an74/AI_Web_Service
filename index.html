@@ -57,17 +57,24 @@
       </p>
 
       <section class="card">
-        <label for="issueInput" class="label">문제 내용</label>
-        <textarea
-          id="issueInput"
-          class="textarea"
-          placeholder="예: 자동차 체인 링크플레이트(PLP) 부품에서 표면 스크래치가 조립과정에서 지속 발견되고 있습니다."
-        ></textarea>
+        <div class="form-group">
+          <label for="productNameInput" class="label">제품명</label>
+          <input
+            id="productNameInput"
+            type="text"
+            class="text-input"
+            placeholder="예: 체인 링크플레이트(PLP)"
+          />
+        </div>
 
-        <button id="generateBtn" class="button">8D 초안 생성</button>
-
-        <p id="message" class="message"></p>
-      </section>
+        <div class="form-group">
+          <label for="defectInput" class="label">불량 현상</label>
+          <textarea
+            id="defectInput"
+            class="textarea"
+            placeholder="예: 표면 스크래치가 지속 발견됨"
+          ></textarea>
+        </div>
 
       <section id="resultCard" class="card result-card hidden">
         <h2>생성 결과</h2>

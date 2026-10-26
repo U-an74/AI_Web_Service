@@ -1,4 +1,7 @@
-const issueInput = document.getElementById("issueInput");
+const productNameInput = document.getElementById("productNameInput");
+const defectInput = document.getElementById("defectInput");
+const foundProcessInput = document.getElementById("foundProcessInput");
+
 const generateBtn = document.getElementById("generateBtn");
 const message = document.getElementById("message");
 const resultCard = document.getElementById("resultCard");
@@ -41,11 +44,35 @@ if (quickStartBtn) {
 applyRoute();
 
 generateBtn.addEventListener("click", async () => {
-  const issue = issueInput.value;
+  const productName = productNameInput.value.trim();
+  const defect = defectInput.value.trim();
+  const foundProcess = foundProcessInput.value.trim();
 
-  message.textContent = "생성 중입니다...";
   resultCard.classList.add("hidden");
   reportText.textContent = "";
+
+  if (!productName) {
+    message.textContent = "제품명을 입력해 주세요.";
+    return;
+  }
+
+  if (!defect) {
+    message.textContent = "불량 현상을 입력해 주세요.";
+    return;
+  }
+
+  const issueLines = [
+    `제품명: ${productName}`,
+    `불량 현상: ${defect}`
+  ];
+
+  if (foundProcess) {
+    issueLines.push(`발견공정: ${foundProcess}`);
+  }
+
+  const issue = issueLines.join("\n");
+
+  message.textContent = "생성 중입니다...";
   generateBtn.disabled = true;
 
   try {
@@ -61,7 +88,7 @@ generateBtn.addEventListener("click", async () => {
 
     if (!response.ok) {
       if (response.status === 400) {
-        message.textContent = "문제를 입력해 주세요.";
+        message.textContent = "제품명과 불량 현상을 입력해 주세요.";
       } else {
         message.textContent = data.error || "잠시 후 다시 시도하세요.";
       }
