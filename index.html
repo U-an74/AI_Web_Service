@@ -58,13 +58,13 @@
 
       <section class="card">
         <div class="form-group">
-          <label for="productNameInput" class="label">제품명</label>
-          <input
-            id="productNameInput"
-            type="text"
-            class="text-input"
-            placeholder="예: 체인 링크플레이트(PLP)"
-          />
+        <label for="productNameInput" class="label">제품명</label>
+        <input
+          id="productNameInput"
+          type="text"
+          class="text-input"
+          placeholder="예: 체인 링크플레이트(PLP)"
+        />
         </div>
 
         <div class="form-group">
@@ -75,6 +75,22 @@
             placeholder="예: 표면 스크래치가 지속 발견됨"
           ></textarea>
         </div>
+
+        <div class="form-group">
+          <label for="foundProcessInput" class="label">
+            발견공정 <span class="optional-text">(선택)</span>
+          </label>
+          <input
+            id="foundProcessInput"
+            type="text"
+            class="text-input"
+            placeholder="예: 조립 공정"
+          />
+        </div>
+
+        <button id="generateBtn" class="button">8D 초안 생성</button>
+        <p id="message" class="message"></p>
+      </section>
 
       <section id="resultCard" class="card result-card hidden">
         <h2>생성 결과</h2>
