@@ -7,28 +7,111 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Auto8D</div>
+      <nav class="nav">
+        <a href="#home" class="nav-link" data-page="homePage">Home</a>
+        <a href="#tool" class="nav-link" data-page="toolPage">AI Tool</a>
+        <a href="#guide" class="nav-link" data-page="guidePage">Guide</a>
+      </nav>
+    </div>
+  </header>
+
   <main class="container">
-    <h1>Auto8D AI Generator</h1>
-    <p class="description">
-      자동차 부품 품질 문제를 입력하면 8D 초안을 생성합니다.
-    </p>
+    <!-- Home -->
+    <section id="homePage" class="page-section">
+      <section class="card hero-card">
+        <h1>Auto8D AI Generator</h1>
+        <p class="description">
+          제품 품질 문제를 입력하면 8D 초안을 생성합니다.
+        </p>
+        <button id="quickStartBtn" class="button">빠른 시작</button>
+      </section>
 
-    <section class="card">
-      <label for="issueInput" class="label">문제 내용</label>
-      <textarea
-        id="issueInput"
-        class="textarea"
-        placeholder="예: 자동차 체인 링크플레이트(PLP) 부품에서 표면 스크래치가 조립과정에서 지속 발견되고 있습니다."
-      ></textarea>
-
-      <button id="generateBtn" class="button">8D 초안 생성</button>
-
-      <p id="message" class="message"></p>
+      <section class="feature-grid">
+        <div class="card">
+          <h2>8D 초안 자동 생성</h2>
+          <p>품질 이슈를 입력하면 D1~D8 형식의 초안을 빠르게 생성합니다.</p>
+        </div>
+        <div class="card">
+          <h2>원인 분석 보조</h2>
+          <p>현장 이슈를 구조적으로 정리할 수 있도록 초안 작성을 돕습니다.</p>
+        </div>
+        <div class="card">
+          <h2>신입 실무 지원</h2>
+          <p>보고서 작성이 익숙하지 않은 주니어 실무자의 시작을 돕습니다.</p>
+        </div>
+      </section>
     </section>
 
-    <section id="resultCard" class="card result-card hidden">
-      <h2>생성 결과</h2>
-      <div id="reportText" class="report-text"></div>
+    <!-- AI Tool -->
+    <section id="toolPage" class="page-section">
+      <h1>Auto8D AI Generator</h1>
+      <p class="description">
+        제품 부품 품질 문제를 입력하면 8D 초안을 생성합니다.
+      </p>
+
+      <p class="notice">
+        본 결과는 초안이며, 최종 보고서는 반드시 실무자의 현장 확인 후 수정되어야 합니다.
+      </p>
+
+      <section class="card">
+        <label for="issueInput" class="label">문제 내용</label>
+        <textarea
+          id="issueInput"
+          class="textarea"
+          placeholder="예: 자동차 체인 링크플레이트(PLP) 부품에서 표면 스크래치가 조립과정에서 지속 발견되고 있습니다."
+        ></textarea>
+
+        <button id="generateBtn" class="button">8D 초안 생성</button>
+
+        <p id="message" class="message"></p>
+      </section>
+
+      <section id="resultCard" class="card result-card hidden">
+        <h2>생성 결과</h2>
+        <div id="reportText" class="report-text"></div>
+      </section>
+    </section>
+
+    <!-- Guide -->
+    <section id="guidePage" class="page-section">
+      <h1>Guide</h1>
+      <p class="description">8D 작성과 4M 관점 정리에 도움이 되는 참고 화면입니다.</p>
+
+      <section class="card">
+        <h2>8D 단계별 설명</h2>
+        <ul class="guide-list">
+          <li><strong>D1</strong> 대응팀 구성</li>
+          <li><strong>D2</strong> 문제 정의</li>
+          <li><strong>D3</strong> 임시 조치</li>
+          <li><strong>D4</strong> 근본 원인 분석</li>
+          <li><strong>D5</strong> 영구 대책 선정</li>
+          <li><strong>D6</strong> 대책 실행 및 검증</li>
+          <li><strong>D7</strong> 재발 방지</li>
+          <li><strong>D8</strong> 종료 및 공유</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>4M 분석 가이드</h2>
+        <ul class="guide-list">
+          <li><strong>Man</strong> : 작업자 숙련도, 교육, 작업 이해도</li>
+          <li><strong>Machine</strong> : 설비 상태, 금형, 치공구, 센서 이상</li>
+          <li><strong>Material</strong> : 자재 LOT 편차, 표면 상태, 입고 이상</li>
+          <li><strong>Method</strong> : 작업 표준, 검사 기준, 조건 관리</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>신입/주니어 작성 팁</h2>
+        <ul class="guide-list">
+          <li>현상은 추측보다 관찰 사실 중심으로 작성하세요.</li>
+          <li>원인은 발생 원인과 유출 원인을 구분해 생각해 보세요.</li>
+          <li>대책은 실행 주체와 검증 방법까지 적으면 더 좋습니다.</li>
+        </ul>
+      </section>
     </section>
   </main>
 

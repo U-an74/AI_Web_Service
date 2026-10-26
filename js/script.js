@@ -4,6 +4,42 @@ const message = document.getElementById("message");
 const resultCard = document.getElementById("resultCard");
 const reportText = document.getElementById("reportText");
 
+const quickStartBtn = document.getElementById("quickStartBtn");
+const pageSections = document.querySelectorAll(".page-section");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function showPage(pageId) {
+  pageSections.forEach((section) => {
+    section.classList.toggle("active", section.id === pageId);
+  });
+
+  navLinks.forEach((link) => {
+    link.classList.toggle("active", link.dataset.page === pageId);
+  });
+}
+
+function applyRoute() {
+  const hash = window.location.hash || "#home";
+
+  if (hash === "#tool") {
+    showPage("toolPage");
+  } else if (hash === "#guide") {
+    showPage("guidePage");
+  } else {
+    showPage("homePage");
+  }
+}
+
+window.addEventListener("hashchange", applyRoute);
+
+if (quickStartBtn) {
+  quickStartBtn.addEventListener("click", () => {
+    window.location.hash = "#tool";
+  });
+}
+
+applyRoute();
+
 generateBtn.addEventListener("click", async () => {
   const issue = issueInput.value;
 
