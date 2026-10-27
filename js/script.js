@@ -5,11 +5,23 @@ const foundProcessInput = document.getElementById("foundProcessInput");
 const generateBtn = document.getElementById("generateBtn");
 const message = document.getElementById("message");
 const resultCard = document.getElementById("resultCard");
+const resultSummary = document.getElementById("resultSummary");
 const reportText = document.getElementById("reportText");
 
 const quickStartBtn = document.getElementById("quickStartBtn");
 const pageSections = document.querySelectorAll(".page-section");
 const navLinks = document.querySelectorAll(".nav-link");
+
+const default8DTitles = {
+  D1: "대응팀 구성",
+  D2: "문제 정의",
+  D3: "임시 조치",
+  D4: "근본 원인 분석",
+  D5: "영구 대책 선정",
+  D6: "대책 실행 및 검증",
+  D7: "재발 방지",
+  D8: "종료 및 공유"
+};
 
 function showPage(pageId) {
   pageSections.forEach((section) => {
@@ -43,6 +55,166 @@ if (quickStartBtn) {
 
 applyRoute();
 
+function clearElement(element) {
+  if (element) {
+    element.innerHTML = "";
+  }
+}
+
+function clearResultView() {
+  if (resultCard) {
+    resultCard.classList.add("hidden");
+  }
+
+  if (resultSummary) {
+    resultSummary.classList.add("hidden");
+    clearElement(resultSummary);
+  }
+
+  if (reportText) {
+    clearElement(reportText);
+  }
+}
+
+function createSummaryRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "summary-row";
+
+  const strong = document.createElement("strong");
+  strong.textContent = label;
+
+  const span = document.createElement("span");
+  span.textContent = value || "-";
+
+  row.appendChild(strong);
+  row.appendChild(span);
+
+  return row;
+}
+
+function renderResultSummary(productName, defect, foundProcess) {
+  if (!resultSummary) {
+    return;
+  }
+
+  clearElement(resultSummary);
+
+  resultSummary.appendChild(createSummaryRow("제품명", productName));
+  resultSummary.appendChild(createSummaryRow("불량 현상", defect));
+
+  if (foundProcess) {
+    resultSummary.appendChild(createSummaryRow("발견공정", foundProcess));
+  }
+
+  resultSummary.classList.remove("hidden");
+}
+
+function parse8DSections(report) {
+  if (!report || typeof report !== "string") {
+    return [];
+  }
+
+  const lines = report.replace(/\r\n/g, "\n").split("\n");
+  const sections = [];
+  let currentSection = null;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    const match = line.match(/^(D[1-8])\s*[\.\-:)]?\s*(.*)$/i);
+
+    if (match) {
+      if (currentSection) {
+        currentSection.body = currentSection.body.trim();
+        sections.push(currentSection);
+      }
+
+      const code = match[1].toUpperCase();
+      const headingText = match[2] ? match[2].trim() : "";
+
+      currentSection = {
+        code,
+        title: headingText || default8DTitles[code] || code,
+        body: ""
+      };
+    } else if (currentSection) {
+      currentSection.body += (currentSection.body ? "\n" : "") + rawLine;
+    }
+  }
+
+  if (currentSection) {
+    currentSection.body = currentSection.body.trim();
+    sections.push(currentSection);
+  }
+
+  return sections;
+}
+
+function renderPlainReport(report) {
+  if (!reportText) {
+    return;
+  }
+
+  clearElement(reportText);
+
+  const plainBox = document.createElement("div");
+  plainBox.className = "plain-report";
+  plainBox.textContent = report || "결과가 없습니다.";
+
+  reportText.appendChild(plainBox);
+}
+
+function render8DCards(sections) {
+  if (!reportText) {
+    return;
+  }
+
+  clearElement(reportText);
+
+  sections.forEach((section) => {
+    const card = document.createElement("article");
+    card.className = "d-card";
+
+    if (!section.body) {
+      card.classList.add("is-empty");
+    }
+
+    const badge = document.createElement("span");
+    badge.className = "d-badge";
+    badge.textContent = section.code;
+
+    const title = document.createElement("h3");
+    title.className = "d-title";
+    title.textContent = section.title;
+
+    const body = document.createElement("div");
+    body.className = "d-body";
+    body.textContent = section.body || "내용이 없습니다.";
+
+    card.appendChild(badge);
+    card.appendChild(title);
+    card.appendChild(body);
+
+    reportText.appendChild(card);
+  });
+}
+
+function renderReportResult(report, productName, defect, foundProcess) {
+  renderResultSummary(productName, defect, foundProcess);
+
+  const sections = parse8DSections(report);
+
+  if (sections.length >= 2) {
+    render8DCards(sections);
+  } else {
+    renderPlainReport(report);
+  }
+
+  if (resultCard) {
+    resultCard.classList.remove("hidden");
+  }
+}
+
 if (
   generateBtn &&
   productNameInput &&
@@ -57,8 +229,7 @@ if (
     const defect = defectInput.value.trim();
     const foundProcess = foundProcessInput.value.trim();
 
-    resultCard.classList.add("hidden");
-    reportText.textContent = "";
+    clearResultView();
     message.textContent = "";
 
     if (!productName) {
@@ -105,8 +276,9 @@ if (
         return;
       }
 
-      reportText.textContent = data.report_text || "결과가 없습니다.";
-      resultCard.classList.remove("hidden");
+      const report = data.report_text || "결과가 없습니다.";
+
+      renderReportResult(report, productName, defect, foundProcess);
       message.textContent = "생성이 완료되었습니다.";
     } catch (error) {
       console.error("요청 실패:", error);
