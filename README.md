@@ -71,11 +71,10 @@ AI가 8D Report 초안을 생성합니다.
 - Vercel
 
 ### AI 연동
-- 코디세이 AI API 사용    
-   model: GPT-5.4	
-   provider: OPENAI	
-   Modality: CHAT0
-   Base URL: https://copa.codyssey.kr/v1
+- 코디세이 AI API 사용
+- OpenAI 호환 방식의 채팅 API 연동
+- Base URL: `https://copa.codyssey.kr/v1`
+
 
 ---
 
@@ -83,13 +82,12 @@ AI가 8D Report 초안을 생성합니다.
 
 ```bash
 Auto8D/
-├─ index.html
-├─ css/
-│  └─ [style.css]
-├─ js
-│  └─ [script.js]
 ├─ api/
-│  └─ [index.py]
+│  └─ index.py
+├─ css/
+│  └─ style.css
+├─ js/
+│  └─ script.js
 ├─ index.html
 └─ README.md
 └─ requirements.txt
@@ -101,8 +99,8 @@ Auto8D/
 
 ### [1] 프로젝트 클론
 ```bash
-git clone [https://github.com/U-an74/AI_Web_Service]
-cd [auto8d-service]
+git clone https://github.com/U-an74/AI_Web_Service
+cd AI_Web_Service
 ```
 ### [2] 프론트 실행
 정적 파일은 브라우저에서 열 수 있으며, 백엔드 API 연동 테스트는 로컬 서버 또는 Vercel 개발 환경에서 진행합니다.
@@ -122,12 +120,14 @@ vercel dev
 ---
 
 ## 6. 환경 변수 설정
-AI API키(기관의 키를 사용하는 경우 BASE URL포함)는 코드에 직접 작성하지 않고 환경 변수(.env)로 관리해야 합니다. 
-- 예시:
+AI API 키와 Base URL은 코드에 직접 작성하지 않고 환경 변수로 관리해야 합니다.
+
+### 로컬 개발 예시 (`.env`)
 ```bash
 OPENAI_API_KEY=발급받은_API_키
-OPENAI_BASE_URL=기관_OpenAI_호환_채팅_엔드포인트
+OPENAI_BASE_URL=https://copa.codyssey.kr/v1
 ```
+
 - Vercel 설정    
    Vercel 프로젝트 접속	
    Settings
@@ -138,13 +138,15 @@ OPENAI_BASE_URL=기관_OpenAI_호환_채팅_엔드포인트
 ---
 
 ## 7. 배포 URL 및 사용 방법
-- **배포 주소: https://auto8d-ai-generator.vercel.app/**
-- 사용 방법 
-   Home에서 서비스 소개 확인	
-   AI Tool 메뉴로 이동 or 빠른 시작 클릭
-   제품명, 불량 현상, 발견 공정(선택) 항목 입력
-   생성 버튼 클릭
-   AI가 생성한 8D Report 초안을 확인
+
+- **배포 주소**: https://auto8d-ai-generator.vercel.app/
+
+### 사용 방법
+1. Home에서 서비스 소개 확인
+2. **AI Tool** 메뉴로 이동하거나 빠른 시작 버튼 클릭
+3. 제품명, 불량 현상, 발견공정(선택) 입력
+4. 생성 버튼 클릭
+5. AI가 생성한 8D Report 초안 확인
 
 ---
 
@@ -199,7 +201,7 @@ OPENAI_BASE_URL=기관_OpenAI_호환_채팅_엔드포인트
 - 환경 변수로 API 키를 안전하게 관리하는 방식
 - 배포 후 수정 및 재배포 프로세스
 
-## 11. 한계 및 향후 개선 방향
+## 12. 한계 및 향후 개선 방향
 - 현재 한계
     AI 응답 품질은 입력 내용과 프롬프트에 따라 달라질 수 있음.
     실제 기업에서 사용하는 8D 문서 형식과 100% 동일하지 않음.
