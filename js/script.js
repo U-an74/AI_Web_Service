@@ -99,12 +99,9 @@ function renderResultSummary(productName, defect, foundProcess) {
 
   clearElement(resultSummary);
 
-  resultSummary.appendChild(createSummaryRow("제품명", productName));
-  resultSummary.appendChild(createSummaryRow("불량 현상", defect));
-
-  if (foundProcess) {
-    resultSummary.appendChild(createSummaryRow("발견공정", foundProcess));
-  }
+  resultSummary.appendChild(createSummaryRow("제품명", productName || "-"));
+  resultSummary.appendChild(createSummaryRow("불량 현상", defect || "-"));
+  resultSummary.appendChild(createSummaryRow("발견공정", foundProcess || "-"));
 
   resultSummary.classList.remove("hidden");
 }
@@ -119,9 +116,9 @@ function parse8DSections(report) {
   let currentSection = null;
 
   for (const rawLine of lines) {
-    const line = rawLine.trim();
+    const trimmedLine = rawLine.trim();
 
-    const match = line.match(/^(D[1-8])\s*[\.\-:)]?\s*(.*)$/i);
+    const match = trimmedLine.match(/^(D[1-8])\s*[\.\-:)]?\s*(.*)$/i);
 
     if (match) {
       if (currentSection) {
@@ -130,15 +127,38 @@ function parse8DSections(report) {
       }
 
       const code = match[1].toUpperCase();
-      const headingText = match[2] ? match[2].trim() : "";
+      const rest = (match[2] || "").trim();
+
+      let title = default8DTitles[code] || code;
+      let body = "";
+
+      if (rest) {
+        const splitMatch = rest.match(/^(.+?)\s*[:：]\s*(.+)$/);
+
+        if (splitMatch) {
+          title = splitMatch[1].trim() || title;
+          body = splitMatch[2].trim();
+        } else {
+          const normalizedDefaultTitle = (default8DTitles[code] || "").replace(/\s+/g, "");
+          const normalizedRest = rest.replace(/\s+/g, "");
+
+          if (normalizedRest === normalizedDefaultTitle) {
+            title = rest;
+            body = "";
+          } else {
+            title = default8DTitles[code] || code;
+            body = rest;
+          }
+        }
+      }
 
       currentSection = {
         code,
-        title: headingText || default8DTitles[code] || code,
-        body: ""
+        title,
+        body
       };
     } else if (currentSection) {
-      currentSection.body += (currentSection.body ? "\n" : "") + rawLine;
+      currentSection.body += (currentSection.body ? "\n" : "") + rawLine.trim();
     }
   }
 
@@ -179,20 +199,25 @@ function render8DCards(sections) {
       card.classList.add("is-empty");
     }
 
+    const header = document.createElement("div");
+    header.className = "d-header";
+
     const badge = document.createElement("span");
     badge.className = "d-badge";
     badge.textContent = section.code;
 
     const title = document.createElement("h3");
     title.className = "d-title";
-    title.textContent = section.title;
+    title.textContent = section.title || default8DTitles[section.code] || section.code;
 
     const body = document.createElement("div");
     body.className = "d-body";
-    body.textContent = section.body || "내용이 없습니다.";
+    body.textContent = section.body || "-";
 
-    card.appendChild(badge);
-    card.appendChild(title);
+    header.appendChild(badge);
+    header.appendChild(title);
+
+    card.appendChild(header);
     card.appendChild(body);
 
     reportText.appendChild(card);
